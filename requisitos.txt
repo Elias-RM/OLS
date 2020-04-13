@@ -1,0 +1,6 @@
+pyreadstat
+pandas
+numpy
+matplotlib
+IPython
+statsmodels
