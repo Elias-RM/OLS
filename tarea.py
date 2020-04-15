@@ -20,6 +20,7 @@ dataframe['Lpfuel'] = np.log(dataframe['pfuel'])
 dataframe['Lpkap'] = np.log(dataframe['pkap'])
 dataframe['Lpprod'] = np.dot(dataframe['plabor'] , dataframe['pfuel'])
 dataframe['Lptcostfuel'] = np.dot(dataframe['Loutput'] , dataframe['pfuel'])
+dataframe['avgcost'] = dataframe["costs"]/dataframe["output"]
 dataframe['One'] = 1
 print(dataframe.head(10))
 
@@ -72,5 +73,23 @@ print(t_test)
 f_test = results.f_test(hypotheses_2)
 print(f_test)
 
+print("\n==== Graficas")
+LY_pred = est2.predict(X)
+# Anti-log:
+Y = np.exp(LY_pred)
+# Colocamos en el Data Frame:
+dataframe['totcost_e'] = Y
+dataframe['avgcost_e'] = dataframe["totcost_e"]/dataframe["output"]
+dataframe.head()
+# graficamos resultados:
+dataframe ['costs'].plot.kde()
+plt.title("Densidad totcost MM USD")
+plt.show()
+
+plt.scatter(dataframe.output, dataframe.avgcost, s = 15, color ="red")
+plt.scatter(dataframe.output, dataframe.avgcost_e, s = 15, color ="blue")
+plt.title("Gráfico de dispersión Output vs Avg cost / Avg cost estimado")
+#
+plt.show()
 
 dataframe.to_csv('guardar.csv')
