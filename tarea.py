@@ -19,15 +19,14 @@ dataframe['Lplabor'] = np.log(dataframe['plabor'])
 dataframe['Lpfuel'] = np.log(dataframe['pfuel'])
 dataframe['Lpkap'] = np.log(dataframe['pkap'])
 dataframe['Lpprod'] = np.dot(dataframe['plabor'] , dataframe['pfuel'])
-dataframe['Lptcostfuel'] = np.dot(dataframe['Loutput'] , dataframe['pfuel'])
-dataframe['avgcost'] = dataframe["costs"]/dataframe["output"]
+dataframe['Loutpfuel'] = np.dot(dataframe['Loutput'] , dataframe['pfuel'])
 dataframe['One'] = 1
 print(dataframe.head(10))
 
 Y = dataframe["Ltotcost"]
 # que valores me faltan
-#X = [["One","Loutput","Loutput_2","Lplabor","Lpfuel", "Lpkap","Lpprod","Lptcostfuel"]]
-X = dataframe[["One","Loutput","Loutput_2", "Lplabor", "Lpfuel", "Lpkap","Lpprod","Lptcostfuel"]]
+#X = [["One","Loutput","Loutput_2","Lplabor","Lpfuel", "Lpkap","Lpprod","Loutpfuel"]]
+X = dataframe[["One","Loutput","Loutput_2", "Lplabor", "Lpfuel", "Lpkap","Lpprod","Loutpfuel"]]
 
 #X = [["One","Loutput", "Lplabor", "Lpfuel", "Lpkap"]]
 
@@ -35,6 +34,7 @@ X = dataframe[["One","Loutput","Loutput_2", "Lplabor", "Lpfuel", "Lpkap","Lpprod
 est = sm.OLS(Y,X)
 est2 = est.fit()
 print(est2.summary())
+
 print("\n\n\n=====================\n   OLS\n=====================\n\n\n")
 print("\n Parametros \n ",est2.params)
 print("\n Valores \n", est2.tvalues)
@@ -43,7 +43,7 @@ print("\n Fvalue \n", est2.fvalue)
 R = np.array(([0,0,0,0,0,0,0,0], [0,1,0,0,0,0,0,0], [0,0,1,0,0,0,0,0], [0,0,0,1,0,0,0,0], [0,0,0,0,1,0,0,0], [0,0,0,0,0,1,0,0], [0,0,0,0,0,0,1,0], [0,0,0,0,0,0,0,1] ))
 print(est2.f_test(R))
 
-formula = 'Ltotcost ~  One + Loutput  + Lplabor + Lpfuel + Lpkap + Lpprod + Lptcostfuel'
+formula = 'Ltotcost ~  One + Loutput  + Lplabor + Lpfuel + Lpkap + Lpprod + Loutpfuel'
 #results = sm.OLS(formula, dataframe)
 
 #formula = 'Ltotcost ~  One + Loutput + Lplabor + Lpfuel + Lpkap'
@@ -58,7 +58,7 @@ print(f_test)
 
 # Otro ejemplo: 
 print("\n\n\n=====================\n            Hipotesis 2\n=====================\n\n\n")
-hypotheses_2 = 'Lplabor + Lpfuel + Lpkap = 1, Lptcostfuel = 0'
+hypotheses_2 = 'Lplabor + Lpfuel + Lpkap = 1, Loutpfuel = 0'
 t_test = results.t_test(hypotheses_2)
 print(t_test)
 f_test = results.f_test(hypotheses_2)
@@ -66,11 +66,10 @@ print(f_test)
 
 # Otro ejemplo: 
 print("\n\n\n=====================\n            Hipotesis 3\n=====================\n\n\n")
-hypotheses_2 = 'Lplabor + Lpfuel + Lpkap = 1, Lpprod = 0'
-hypotheses_2 = 'Lplabor + Lpfuel + Lpkap = 1, Lptcostfuel = 0'
-t_test = results.t_test(hypotheses_2)
+hypotheses_3 = 'Lplabor + Lpfuel + Lpkap = 1, Lpprod = 0'
+t_test = results.t_test(hypotheses_3)
 print(t_test)
-f_test = results.f_test(hypotheses_2)
+f_test = results.f_test(hypotheses_3)
 print(f_test)
 
 print("\n==== Graficas")
@@ -78,6 +77,7 @@ LY_pred = est2.predict(X)
 # Anti-log:
 Y = np.exp(LY_pred)
 # Colocamos en el Data Frame:
+dataframe['avgcost'] = dataframe["costs"]/dataframe["output"]
 dataframe['totcost_e'] = Y
 dataframe['avgcost_e'] = dataframe["totcost_e"]/dataframe["output"]
 dataframe.head()
